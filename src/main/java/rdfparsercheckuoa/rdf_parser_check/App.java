@@ -1,10 +1,5 @@
 package rdfparsercheckuoa.rdf_parser_check;
 
-import org.apache.spark.sql.Row;
-
-
-import java.io.*;
-
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -12,22 +7,18 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
 import org.apache.spark.sql.SparkSession;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoders;
 
 
 
 import java.util.Arrays;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import sun.java2d.pipe.SpanShapeRenderer;
+
 
 
 
 public class App 
 {
     static SparkSession spark;
-    static String name_tripletable = "prost_test.tripletable1";
+    static String name_tripletable = "prost_test.triples";
     static String column_name_subject = "subject";
     static String column_name_predicate = "predicate";
     static String column_name_object = "object";
@@ -47,7 +38,10 @@ public class App
     }
     
     private static void runSql() {
-        spark.sql("SELECT COUNT(*) FROM prost_test.triples").show();
+        spark.sql("SELECT COUNT(DISTINCT p) FROM prost_test.vp_http___data_linkedeodata_eu_ontology_has_type").show();
+        spark.sql("SELECT COUNT(DISTINCT o) FROM prost_test.vp_http___data_linkedeodata_eu_ontology_has_type").show();
+
+
 
     }
 

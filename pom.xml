@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>rdfparsercheckuoa</groupId>
-  <artifactId>rdf-parser-check</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <artifactId>spark-sql-query</artifactId>
+  <version>0.0.3-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>rdf-parser-check</name>
+  <name>spark-sql-query</name>
   <url>http://maven.apache.org</url>
 
   <properties>
@@ -52,9 +52,6 @@
 			
 		</dependency>
   </dependencies>
-  <build>
-  <plugins>
-  </plugins>
-  </build>
+
             
 </project>
