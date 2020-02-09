@@ -43,7 +43,7 @@ public class App
     
     private static void runSql() {
         Dataset<Row> res = spark.sql("SELECT COUNT(DISTINCT p) FROM triples");
-        System.out.println(res.first());
+        System.out.println("----------------------->"+res.first().getLong(0));
         // spark.sql("SELECT COUNT(DISTINCT s) FROM prost_test.vp_http___data_linkedeodata_eu_ontology_has_type").show();
         // spark.sql("SELECT COUNT(DISTINCT o) FROM prost_test.vp_http___data_linkedeodata_eu_ontology_has_type").show();
 
