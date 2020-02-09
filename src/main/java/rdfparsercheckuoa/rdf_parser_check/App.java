@@ -8,6 +8,10 @@ import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
 import org.apache.spark.sql.SparkSession;
 
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.Encoder;
+import org.apache.spark.sql.Encoders;
 
 
 import java.util.Arrays;
@@ -38,7 +42,8 @@ public class App
     }
     
     private static void runSql() {
-        spark.sql("SELECT COUNT(DISTINCT p) FROM triples").show();
+        Dataset<Row> res = spark.sql("SELECT COUNT(DISTINCT p) FROM triples");
+        System.out.println(res.first());
         // spark.sql("SELECT COUNT(DISTINCT s) FROM prost_test.vp_http___data_linkedeodata_eu_ontology_has_type").show();
         // spark.sql("SELECT COUNT(DISTINCT o) FROM prost_test.vp_http___data_linkedeodata_eu_ontology_has_type").show();
 
