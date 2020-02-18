@@ -26,11 +26,11 @@ public class App
     static String column_name_subject = "subject";
     static String column_name_predicate = "predicate";
     static String column_name_object = "object";
+    static String tableName = "distinct_literals";
 
     public static void main( String[] args )
     {
-        final String queryDropTripleTable = String.format("DROP TABLE IF EXISTS %s", name_tripletable);
-        final String queryDropTripleTableFixed = String.format("DROP TABLE IF EXISTS %s", name_tripletable);
+
 
         App.spark = SparkSession.builder().appName("JD Word Counter").enableHiveSupport().getOrCreate();
         //App.spark.sql(queryDropTripleTable);
@@ -42,8 +42,10 @@ public class App
     }
     
     private static void runSql() {
-        Dataset<Row> res = spark.sql("SELECT COUNT(DISTINCT p) FROM triples");
-        System.out.println("----------------------->"+res.first().getLong(0));
+        spark.sql("DROP TABLE IF EXISTS " +tableName);
+        Dataset<Row> res = spark.sql(String.format("CREATE TABLE %1$s  AS SELECT DISTINCT(s) FROM prost_test.triples"));
+        res = spark.sql(String.format("INSERT INTO TABLE %1$s  SELECT DISTINCT(o) FROM prost_test.triples"));
+        res.show();
         // spark.sql("SELECT COUNT(DISTINCT s) FROM prost_test.vp_http___data_linkedeodata_eu_ontology_has_type").show();
         // spark.sql("SELECT COUNT(DISTINCT o) FROM prost_test.vp_http___data_linkedeodata_eu_ontology_has_type").show();
 
