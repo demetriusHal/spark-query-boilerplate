@@ -44,6 +44,8 @@ public class App {
         //App.spark.sql(queryDropTripleTableFixed);
 
         prefixEncode();
+        spark.sql("select count(*)  from prost_test.double_encoded").show();
+        spark.sql("select count(*)  from prost_test.triples").show();
 
     }
 
@@ -147,7 +149,7 @@ public class App {
         countData.saveAsTextFile(outfile);
     }
 
-    private static void createDisinct() {
+    private static void createDistinct() {
         spark.sql("DROP TABLE IF EXISTS prost_test.triples_distinct");
         spark.sql("DROP TABLE IF EXISTS prost_test.td1");
         spark.sql("DROP TABLE IF EXISTS prost_test.td2");
@@ -159,7 +161,7 @@ public class App {
     }
 
     private static void prefixEncode() {
-        createDisinct();
+        createDistinct();
         Dataset<Row> res;
         res = spark.sql("SELECT * FROM prost_test.triples_distinct");
         res.show();
@@ -176,8 +178,11 @@ public class App {
         spark.sql("DROP TABLE IF EXISTS prost_test.triples_split");
         spark.sql("CREATE TABLE IF NOT EXISTS prost_test.triples_split AS SELECT * FROM tempTable");
 
+
+        spark.sql("DROP TABLE IF EXISTS prost_test.right_dict");
         spark.sql("DROP TABLE IF EXISTS prost_test.left_dict");
-        spark.sql("DROP TABLE IF EXISTS prost_test.left_dict");
+        spark.sql("DROP TABLE IF EXISTS prost_test.tripl_left");
+        spark.sql("DROP TABLE IF EXISTS prost_test.tripl_right");
         spark.sql("DROP TABLE IF EXISTS prost_test.mixed");
         spark.sql("DROP TABLE IF EXISTS prost_test.double_encoded");
 
@@ -191,8 +196,14 @@ public class App {
 
         spark.sql("CREATE TABLE prost_test.mixed AS (SELECT t.full, t.left, l.value as lvalue, t.right, r.value as rvalue FROM prost_test.triples_split t, prost_test.left_dict l, prost_test.right_dict r WHERE t.left = l.key AND t.right = r.key)");
         spark.sql("DROP TABLE IF EXISTS prost_test.double_encoded");
-        spark.sql("CREATE TABLE IF NOT EXISTS prost_test.double_encoded AS (SELECT concat(concat(m1.lvalue, '/'), m1.rvalue) as s, t.p , concat(concat(m2.lvalue, '/'), m2.rvalue) as o FROM prost_test.triples t, prost_test.mixed m1, prost_test.mixed m2 WHERE m1.full = t.s and m2.full = t.o)");
-
+        spark.sql("DROP TABLE IF EXISTS prost_test.double_dictionary");
+        //spark.sql("CREATE TABLE IF NOT EXISTS prost_test.double_encoded AS (SELECT concat(concat(m1.lvalue, '/'), m1.rvalue) as s, t.p , concat(concat(m2.lvalue, '/'), m2.rvalue) as o, t.OTYPE FROM prost_test.triples t, prost_test.mixed m1, prost_test.mixed m2 WHERE m1.full = t.s and m2.full = t.o)");
+        System.out.println("HELLO");
+        spark.sql("CREATE TABLE IF NOT EXISTS prost_test.double_dictionary AS ((SELECT concat(concat(lvalue, '/'), right) as value, full as key  FROM prost_test.mixed UNION (SELECT o,o FROM prost_test.triples WHERE Otype=1)))");
+        spark.sql("DROP TABLE IF EXISTS prost_test.double_encoded_full");
+        System.out.println("####");
+        spark.sql("CREATE TABLE IF NOT EXISTS prost_test.double_encoded AS SELECT m1.value as s,t.p, m2.value as o, t.otype FROM prost_test.double_dictionary m1, prost_test.double_dictionary m2, prost_test.triples t WHERE m1.key=t.s AND m2.key=t.o  ");
+        System.out.println("####");
     }
 
 }
